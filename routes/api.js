@@ -18,7 +18,7 @@ router.get('/users', function(req, res, next) {
     return res.status(500).json({success: false, data: err});
   }
     // SQL Query > select users
-    const query =client.query('SELECT user_id, created_atherou FROM users LIMIT 20');
+    const query =client.query('SELECT user_id, created_at FROM users LIMIT 20');
     // Stream results back one row at a time
     query.on('row', function(row) {
       results.push(row);
