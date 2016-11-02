@@ -1,9 +1,17 @@
 const express = require('express');
+const app= express();
 const router = express.Router();
+const cors = require('cors');
 const pg = require('pg');
 const path = require('path');
-const connectionString = 'postgres://pzzkwpsqggsmig:CGOQ6vuw7ecylxEiuWJ2eIElMN@ec2-54-243-203-85.compute-1.amazonaws.com:5432/d67oe9r9t3ce0';
 
+const corsOptions = {
+  origin: 'http://localhost:8100',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+app.use(cors(corsOptions));
+
+const connectionString = 'postgres://pzzkwpsqggsmig:CGOQ6vuw7ecylxEiuWJ2eIElMN@ec2-54-243-203-85.compute-1.amazonaws.com:5432/d67oe9r9t3ce0';
 pg.defaults.ssl = true;
 
 /* GET users listing. */
@@ -46,7 +54,7 @@ router.get('/countries', function(req, res, next) {
     }
     // SQL Query > select users
     //const query =client.query('SELECT ST_AsGeoJSON(points_geom,points_size) FROM contributions LIMIT 1');
-    const query =client.query('SELECT geonameid, country, capital, population FROM countryinfo ');
+    const query =client.query('SELECT geonameid, country, capital, population FROM countryinfo ORDER BY country ');
 
     // Stream results back one row at a time
     query.on('row', function(row) {
@@ -75,6 +83,36 @@ router.get('/countries/:id', function(req, res, next) {
     // SQL Query > select users
     //const query =client.query('SELECT ST_AsGeoJSON(points_geom,points_size) FROM contributions LIMIT 1');
     const query =client.query('SELECT country, capital, population FROM countryinfo WHERE geonameid = '+id);
+
+    // Stream results back one row at a time
+    query.on('row', function(row) {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', function() {
+      done();
+      return res.json(results);
+    });
+  });
+});
+
+/* GET city statistics . */
+router.get('/countries/:id/statistics', function(req, res, next) {
+  const results = [];
+  const id = req.param('id');
+
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, function(err, client, done) {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }
+    // SQL Query > select total_duration and total_distance.
+    const q = 'SELECT count(DISTINCT user_id) as total_users, sum(distance) as total_distance, sum(duration) as total_duration'+
+        ' FROM contributions WHERE geonameid = '+id;
+    const query =client.query(q);
 
     // Stream results back one row at a time
     query.on('row', function(row) {
