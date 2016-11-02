@@ -5,17 +5,12 @@ const cors = require('cors');
 const pg = require('pg');
 const path = require('path');
 
-const corsOptions = {
-  origin: 'http://localhost:8100',
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-};
-app.use(cors(corsOptions));
 
 const connectionString = 'postgres://pzzkwpsqggsmig:CGOQ6vuw7ecylxEiuWJ2eIElMN@ec2-54-243-203-85.compute-1.amazonaws.com:5432/d67oe9r9t3ce0';
 pg.defaults.ssl = true;
 
 /* GET users listing. */
-router.get('/users', function(req, res, next) {
+router.get('/users',cors(), function(req, res, next) {
   const results = [];
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, function(err, client, done) {
@@ -42,7 +37,7 @@ router.get('/users', function(req, res, next) {
 });
 
 /* GET countries listing. */
-router.get('/countries', function(req, res, next) {
+router.get('/countries',cors(), function(req, res, next) {
   const results = [];
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, function(err, client, done) {
@@ -69,7 +64,7 @@ router.get('/countries', function(req, res, next) {
 });
 
 /* GET country by id . */
-router.get('/countries/:id', function(req, res, next) {
+router.get('/countries/:id',cors(), function(req, res, next) {
   const results = [];
   const id = req.param('id');
   // Get a Postgres client from the connection pool
@@ -97,7 +92,7 @@ router.get('/countries/:id', function(req, res, next) {
 });
 
 /* GET city statistics . */
-router.get('/countries/:id/statistics', function(req, res, next) {
+router.get('/countries/:id/statistics',cors(), function(req, res, next) {
   const results = [];
   const id = req.param('id');
 
@@ -127,7 +122,7 @@ router.get('/countries/:id/statistics', function(req, res, next) {
 });
 
 /* GET cities listing. */
-router.get('/cities', function(req, res, next) {
+router.get('/cities',cors(), function(req, res, next) {
   const results = [];
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, function(err, client, done) {
@@ -154,7 +149,7 @@ router.get('/cities', function(req, res, next) {
 });
 
 /* GET city by id . */
-router.get('/cities/:id', function(req, res, next) {
+router.get('/cities/:id', cors(),function(req, res, next) {
   const results = [];
   const id = req.param('id');
   // Get a Postgres client from the connection pool
@@ -182,7 +177,7 @@ router.get('/cities/:id', function(req, res, next) {
 });
 
 /* GET city statistics . */
-router.get('/cities/:id/statistics', function(req, res, next) {
+router.get('/cities/:id/statistics',cors(), function(req, res, next) {
   const results = [];
   const id = req.param('id');
 
@@ -211,7 +206,7 @@ router.get('/cities/:id/statistics', function(req, res, next) {
 });
 
 /* GET country statistics . */
-router.get('/countries/:id/statistics', function(req, res, next) {
+router.get('/countries/:id/statistics',cors(), function(req, res, next) {
   const results = [];
   const id = req.param('id');
 
@@ -240,7 +235,7 @@ router.get('/countries/:id/statistics', function(req, res, next) {
 });
 
 /* GET city contributions  . */
-router.get('/cities/:id/contributions', function(req, res, next) {
+router.get('/cities/:id/contributions',cors(), function(req, res, next) {
   const results = [];
   const id = req.param('id');
 
@@ -270,7 +265,7 @@ router.get('/cities/:id/contributions', function(req, res, next) {
 });
 
 /* GET city contributions in time frame . */
-router.get('/cities/:id/contributions/:sd/:ed', function(req, res, next) {
+router.get('/cities/:id/contributions/:sd/:ed',cors(), function(req, res, next) {
   const results = [];
   const id = req.param('id');
   const start_date = req.param('sd');
