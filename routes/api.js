@@ -172,6 +172,35 @@ router.get('/cities/:id/statistics', function(req, res, next) {
   });
 });
 
+/* GET country statistics . */
+router.get('/countries/:id/statistics', function(req, res, next) {
+  const results = [];
+  const id = req.param('id');
+
+
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, function(err, client, done) {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }
+    // SQL Query > select total_duration and total_distance.
+    const query =client.query('SELECT count(DISTINCT user_id) as total_users, sum(distance) as total_distance, sum(duration) as total_duration FROM contributions, geonames, countryinfo WHERE contributions.geonameid = geonames.geonameid AND geonames.country = countryinfo.iso_alpha2 LIMIT 1');
+
+    // Stream results back one row at a time
+    query.on('row', function(row) {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', function() {
+      done();
+      return res.json(results);
+    });
+  });
+});
+
 /* GET city contributions  . */
 router.get('/cities/:id/contributions', function(req, res, next) {
   const results = [];
