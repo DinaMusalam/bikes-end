@@ -63,7 +63,7 @@ router.get('/countries', function(req, res, next) {
     // After all data is returned, close connection and return results
     query.on('end', function() {
       done();
-      return res.json(results);
+      return res.json({countries:results});
     });
   });
 });
@@ -91,7 +91,7 @@ router.get('/countries/:id', function(req, res, next) {
     // After all data is returned, close connection and return results
     query.on('end', function() {
       done();
-      return res.json(results);
+      return res.json({country:results});
     });
   });
 });
@@ -126,6 +126,35 @@ router.get('/countries/:id/statistics', function(req, res, next) {
   });
 });
 
+/* GET cities of country listing . */
+router.get('/countries/:id/cities', function(req, res, next) {
+  const results = [];
+  const id = req.param('id');
+
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, function(err, client, done) {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }
+    // SQL Query > select users
+    //const query =client.query('SELECT ST_AsGeoJSON(points_geom,points_size) FROM contributions LIMIT 1');
+    const query =client.query('SELECT geonames.geonameid, geonames.name, geonames.latitude, geonames.longitude , geonames.country, geonames.population FROM geonames ,countryinfo WHERE geonames.country = countryinfo.iso_alpha2 AND countryinfo.geonameid= '+id);
+
+    // Stream results back one row at a time
+    query.on('row', function(row) {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', function() {
+      done();
+      return res.json({cities:results});
+    });
+  });
+});
+
 /* GET cities listing. */
 router.get('/cities', function(req, res, next) {
   const results = [];
@@ -148,7 +177,7 @@ router.get('/cities', function(req, res, next) {
     // After all data is returned, close connection and return results
     query.on('end', function() {
       done();
-      return res.json(results);
+      return res.json({cities:results});
     });
   });
 });
@@ -196,7 +225,7 @@ router.get('/cities/:id/statistics', function(req, res, next) {
       return res.status(500).json({success: false, data: err});
     }
     // SQL Query > select total_duration and total_distance.
-    const query =client.query('SELECT count(DISTINCT user_id) as total_users, sum(distance) as total_distance, sum(duration) as total_duration FROM contributions WHERE geonameid = '+id);
+    const query =client.query('SELECT count(DISTINCT user_id) as total_users, sum(distance) as total_distance, sum(duration) as total_duration,count(*) as total_contributions FROM contributions WHERE geonameid = '+id);
 
     // Stream results back one row at a time
     query.on('row', function(row) {
@@ -205,7 +234,7 @@ router.get('/cities/:id/statistics', function(req, res, next) {
     // After all data is returned, close connection and return results
     query.on('end', function() {
       done();
-      return res.json(results);
+      return res.json({statistics:results[0]});
     });
   });
 });
@@ -270,11 +299,13 @@ router.get('/cities/:id/contributions', function(req, res, next) {
 });
 
 /* GET city contributions in time frame . */
-router.get('/cities/:id/contributions/:sd/:ed', function(req, res, next) {
+router.get('/cities/:id/filter/:sd/:ed/:res', function(req, res, next) {
   const results = [];
   const id = req.param('id');
   const start_date = req.param('sd');
   const end_date = req.param('ed');
+  const resolution = req.param('res');
+
 
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, function(err, client, done) {
@@ -285,7 +316,8 @@ router.get('/cities/:id/contributions/:sd/:ed', function(req, res, next) {
       return res.status(500).json({success: false, data: err});
     }
     // SQL Query >
-    const query =client.query("SELECT distance, duration, started_at FROM contributions WHERE started_at >= timestamp '"+start_date+"' AND started_at<= timestamp '"+end_date+"'");
+    const query =client.query("SELECT distance, duration, started_at as date FROM contributions WHERE geonameid= "+id
+        +" AND started_at >= timestamp '"+start_date+"' AND started_at<= timestamp '"+end_date+"'");
 
     console.log('guery',query);
     // Stream results back one row at a time
