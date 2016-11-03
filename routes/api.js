@@ -197,7 +197,7 @@ router.get('/cities/:id', function(req, res, next) {
     }
     // SQL Query >
     //const query =client.query('SELECT ST_AsGeoJSON(points_geom,points_size) FROM contributions LIMIT 1');
-    const query =client.query('SELECT geonameid, latitude, longitude, country, population FROM geonames WHERE geonameid = '+id);
+    const query =client.query('SELECT geonameid, latitude, longitude, country, population, timezone FROM geonames WHERE geonameid = '+id);
 
     // Stream results back one row at a time
     query.on('row', function(row) {
