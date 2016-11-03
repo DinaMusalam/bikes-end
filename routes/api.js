@@ -2,6 +2,7 @@ const express = require('express');
 const app= express();
 const cors = require('cors');
 
+const moment = require('moment');
 
 const pg = require('pg');
 const path = require('path');
@@ -331,5 +332,64 @@ router.get('/cities/:id/filter/:sd/:ed/:res', function(req, res, next) {
     });
   });
 });
+
+
+/* GET city contributions in time frame . */
+router.get('/cities/:id/filter2/:sd/:ed/:res', function(req, res, next) {
+  const results = [];
+  const id = req.param('id');
+  const start_date = req.param('sd');
+  const end_date = req.param('ed');
+  const resolution = req.param('res');
+
+
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, function(err, client, done) {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }
+
+    var diff = moment(end_date).diff(start_date,resolution);
+    //return res.json(diff);
+    for(var i =0; i<diff;i++){
+      // SQL Query >
+      const shiftedDate_s = moment(start_date).add(i,resolution).toISOString();
+      const shiftedDate_e = moment(start_date).add(i+1,resolution).toISOString();
+
+      var query =client.query("SELECT sum(distance) as distance, sum(duration) as duration  FROM contributions WHERE geonameid= "+id
+          +" AND started_at >= timestamp '"+shiftedDate_s+"' AND started_at<= timestamp '"+shiftedDate_e+"'");
+
+      console.log('guery',query);
+      // Stream results back one row at a time
+      query.on('row', function(row) {
+        row.date = shiftedDate_s;
+        results.push(row);
+      });
+
+      // After all data is returned, close connection and return results
+      query.on('end', function() {
+        if(results.length==diff){
+          done();
+          return res.json(results);
+        }
+
+      });
+    }
+    // // SQL Query >
+    // const query =client.query("SELECT distance, duration, started_at as date FROM contributions WHERE geonameid= "+id
+    //     +" AND started_at >= timestamp '"+start_date+"' AND started_at<= timestamp '"+end_date+"'");
+    //
+    // console.log('guery',query);
+    // // Stream results back one row at a time
+    // query.on('row', function(row) {
+    //   results.push(row);
+    // });
+
+  });
+});
+
 
 module.exports = router;
