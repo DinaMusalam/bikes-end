@@ -359,13 +359,13 @@ router.get('/cities/:id/filter2/:sd/:ed/:res', function(req, res, next) {
       var shiftedDate_s = moment(start_date).add(i,resolution).toISOString();
       var shiftedDate_e = moment(start_date).add(i+1,resolution).toISOString();
 
-      var query =client.query("SELECT sum(distance) as distance, sum(duration) as duration  FROM contributions WHERE geonameid= "+id
+      var query =client.query("SELECT min(started_at) as date, sum(distance) as distance, sum(duration) as duration  FROM contributions WHERE geonameid= "+id
           +" AND started_at >= timestamp '"+shiftedDate_s+"' AND started_at <= timestamp '"+shiftedDate_e+"'");
 
       console.log('guery',query);
       // Stream results back one row at a time
       query.on('row', function(row) {
-        row.date = shiftedDate_s;
+
         results.push(row);
       });
 
