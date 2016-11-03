@@ -142,7 +142,7 @@ router.get('/countries/:id/cities', function(req, res, next) {
     }
     // SQL Query > select users
     //const query =client.query('SELECT ST_AsGeoJSON(points_geom,points_size) FROM contributions LIMIT 1');
-    const query =client.query('SELECT geonames.geonameid, geonames.name, geonames.latitude, geonames.longitude , geonames.country, geonames.population FROM geonames ,countryinfo WHERE geonames.country = countryinfo.iso_alpha2 AND countryinfo.geonameid= '+id);
+    const query =client.query('SELECT geonames.geonameid, geonames.name, geonames.latitude, geonames.longitude , geonames.country, geonames.population, geonames.timezone FROM geonames ,countryinfo WHERE geonames.country = countryinfo.iso_alpha2 AND countryinfo.geonameid= '+id);
 
     // Stream results back one row at a time
     query.on('row', function(row) {
