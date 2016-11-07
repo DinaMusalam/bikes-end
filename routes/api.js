@@ -97,10 +97,9 @@ router.get('/countries/:id', function(req, res, next) {
   });
 });
 
-/* GET city statistics . */
-router.get('/countries/:id/statistics', function(req, res, next) {
+/* GET Global statistics . */
+router.get('/global/statistics', function(req, res, next) {
   const results = [];
-  const id = req.param('id');
 
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, function(err, client, done) {
@@ -112,7 +111,7 @@ router.get('/countries/:id/statistics', function(req, res, next) {
     }
     // SQL Query > select total_duration and total_distance.
     const q = 'SELECT count(DISTINCT user_id) as total_users, sum(distance) as total_distance, sum(duration) as total_duration'+
-        ' FROM contributions WHERE geonameid = '+id;
+        ' FROM contributions ';
     const query =client.query(q);
 
     // Stream results back one row at a time
@@ -142,7 +141,7 @@ router.get('/countries/:id/cities', function(req, res, next) {
     }
     // SQL Query > select users
     //const query =client.query('SELECT ST_AsGeoJSON(points_geom,points_size) FROM contributions LIMIT 1');
-    const query =client.query('SELECT geonames.geonameid, geonames.name, geonames.latitude, geonames.longitude , geonames.country, geonames.population, geonames.timezone FROM geonames ,countryinfo WHERE geonames.country = countryinfo.iso_alpha2 AND countryinfo.geonameid= '+id);
+    const query =client.query('SELECT geonames.geonameid, geonames.name, geonames.latitude, geonames.longitude , geonames.country, geonames.population, geonames.timezone FROM geonames ,countryinfo WHERE geonames.country = countryinfo.iso_alpha2 AND countryinfo.geonameid= '+id+" ORDER BY geonames.name");
 
     // Stream results back one row at a time
     query.on('row', function(row) {
@@ -156,7 +155,7 @@ router.get('/countries/:id/cities', function(req, res, next) {
   });
 });
 
-/* GET cities listing. */
+/* GET cities listing. no use for this call */
 router.get('/cities', function(req, res, next) {
   const results = [];
   // Get a Postgres client from the connection pool
@@ -211,6 +210,36 @@ router.get('/cities/:id', function(req, res, next) {
   });
 });
 
+/* GET country statistics . */
+router.get('/countries/:id/statistics', function(req, res, next) {
+  const results = [];
+  const id = req.param('id');
+
+
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, function(err, client, done) {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }
+    // SQL Query > select total_duration and total_distance.
+    const query =client.query('SELECT count(DISTINCT user_id) as total_users, sum(distance) as total_distance, sum(duration) as total_duration FROM contributions, geonames, countryinfo WHERE contributions.geonameid = geonames.geonameid AND geonames.country = countryinfo.iso_alpha2 AND countryinfo.geonameid = '+id+' LIMIT 1');
+
+    // Stream results back one row at a time
+    query.on('row', function(row) {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', function() {
+      done();
+      return res.json(results);
+    });
+  });
+});
+
+
 /* GET city statistics . */
 router.get('/cities/:id/statistics', function(req, res, next) {
   const results = [];
@@ -240,34 +269,34 @@ router.get('/cities/:id/statistics', function(req, res, next) {
   });
 });
 
-/* GET country statistics . */
-router.get('/countries/:id/statistics', function(req, res, next) {
-  const results = [];
-  const id = req.param('id');
-
-
-  // Get a Postgres client from the connection pool
-  pg.connect(connectionString, function(err, client, done) {
-    // Handle connection errors
-    if(err) {
-      done();
-      console.log(err);
-      return res.status(500).json({success: false, data: err});
-    }
-    // SQL Query > select total_duration and total_distance.
-    const query =client.query('SELECT count(DISTINCT user_id) as total_users, sum(distance) as total_distance, sum(duration) as total_duration FROM contributions, geonames, countryinfo WHERE contributions.geonameid = geonames.geonameid AND geonames.country = countryinfo.iso_alpha2 LIMIT 1');
-
-    // Stream results back one row at a time
-    query.on('row', function(row) {
-      results.push(row);
-    });
-    // After all data is returned, close connection and return results
-    query.on('end', function() {
-      done();
-      return res.json(results);
-    });
-  });
-});
+// /* GET country statistics . */
+// router.get('/countries/:id/statistics', function(req, res, next) {
+//   const results = [];
+//   const id = req.param('id');
+//
+//
+//   // Get a Postgres client from the connection pool
+//   pg.connect(connectionString, function(err, client, done) {
+//     // Handle connection errors
+//     if(err) {
+//       done();
+//       console.log(err);
+//       return res.status(500).json({success: false, data: err});
+//     }
+//     // SQL Query > select total_duration and total_distance.
+//     const query =client.query('SELECT count(DISTINCT user_id) as total_users, sum(distance) as total_distance, sum(duration) as total_duration FROM contributions, geonames, countryinfo WHERE contributions.geonameid = geonames.geonameid AND geonames.country = countryinfo.iso_alpha2 LIMIT 1');
+//
+//     // Stream results back one row at a time
+//     query.on('row', function(row) {
+//       results.push(row);
+//     });
+//     // After all data is returned, close connection and return results
+//     query.on('end', function() {
+//       done();
+//       return res.json(results);
+//     });
+//   });
+// });
 
 /* GET city contributions  . */
 router.get('/cities/:id/contributions', function(req, res, next) {
@@ -285,7 +314,7 @@ router.get('/cities/:id/contributions', function(req, res, next) {
     }
     // SQL Query > select users
     //const query =client.query('SELECT ST_AsGeoJSON(points_geom,points_size) FROM contributions LIMIT 1');
-    const query =client.query('SELECT distance, duration, started_at FROM contributions WHERE geonameid = '+id+' LIMIT 20');
+    const query =client.query('SELECT contribution_id, distance, duration, started_at FROM contributions WHERE geonameid = '+id+' LIMIT 20');
 
     // Stream results back one row at a time
     query.on('row', function(row) {
@@ -298,6 +327,69 @@ router.get('/cities/:id/contributions', function(req, res, next) {
     });
   });
 });
+
+/* GET contribution by id  . */
+router.get('/contributions/:id', function(req, res, next) {
+  const results = [];
+  const id = req.params.id;
+
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, function(err, client, done) {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }
+    // SQL Query > select users
+    //const query =client.query('SELECT ST_AsGeoJSON(points_geom,points_size) FROM contributions LIMIT 1');
+    const query =client.query("SELECT * FROM contributions WHERE contribution_id = '"+id+"'");
+
+    // Stream results back one row at a time
+    query.on('row', function(row) {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', function() {
+      done();
+      if(!results.length)
+        return res.json({});
+      return res.json(results[0]);
+    });
+  });
+});
+
+/* GET contribution Geojson . */
+router.get('/contributions/:id/geojson', function(req, res, next) {
+  const results = [];
+  const id = req.params.id;
+
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, function(err, client, done) {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }
+    // SQL Query > select users
+    //const query =client.query('SELECT ST_AsGeoJSON(points_geom,points_size) FROM contributions LIMIT 1');
+    const query =client.query("SELECT  ST_AsGeoJSON(points_geom) FROM contributions WHERE contribution_id = '"+id+"'");
+
+    // Stream results back one row at a time
+    query.on('row', function(row) {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', function() {
+      done();
+      if(!results.length)
+        return res.json({});
+      return res.json(results[0]);
+    });
+  });
+});
+
 
 /* GET city contributions in time frame . */
 router.get('/cities/:id/filter/:sd/:ed/:res', function(req, res, next) {
@@ -354,7 +446,8 @@ router.get('/cities/:id/filter2/:sd/:ed/:res', function(req, res, next) {
 
     var diff = moment(end_date).diff(start_date,resolution);
     //return res.json(diff);
-    for(var i =0; i<diff;i++){
+    var i = 0;
+    for( i =0; i<diff;i++){
       // SQL Query >
       var shiftedDate_s = moment(start_date).add(i,resolution).toISOString();
       var shiftedDate_e = moment(start_date).add(i+1,resolution).toISOString();
@@ -365,8 +458,12 @@ router.get('/cities/:id/filter2/:sd/:ed/:res', function(req, res, next) {
       console.log('guery',query);
       // Stream results back one row at a time
       query.on('row', function(row) {
-
+        if(!row.date){
+          row.date =row.duration=row.distance = 0;
+        }
         results.push(row);
+        //console.log('results',results);
+
       });
 
       // After all data is returned, close connection and return results
