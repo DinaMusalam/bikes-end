@@ -42,6 +42,92 @@ router.get('/users', function(req, res, next) {
   });
 });
 
+/* GET user info by id . */
+router.get('/users/:id/info', function(req, res, next) {
+  const results = [];
+  const id= req.params.id;
+
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, function(err, client, done) {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }
+    // SQL Query > select users
+    //const query =client.query('SELECT ST_AsGeoJSON(points_geom,points_size) FROM contributions LIMIT 1');
+    const query =client.query("SELECT users.device_id, users.user_id FROM users WHERE users.user_id = '"+id+"'");
+
+    // Stream results back one row at a time
+    query.on('row', function(row) {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', function() {
+      done();
+      return res.json(results[0]);
+    });
+  });
+});
+
+/* GET user contributions by id . */
+router.get('/users/:id/contributions', function(req, res, next) {
+  const results = [];
+  const id= req.params.id;
+
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, function(err, client, done) {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }
+    // SQL Query > select users
+    //const query =client.query('SELECT ST_AsGeoJSON(points_geom,points_size) FROM contributions LIMIT 1');
+    const query =client.query("SELECT users.device_id, users.user_id, contributions.contribution_id,contributions.started_at FROM contributions, users WHERE users.user_id=contributions.user_id AND users.user_id = '"+id+"' ORDER BY contributions.started_at DESC");
+
+    // Stream results back one row at a time
+    query.on('row', function(row) {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', function() {
+      done();
+      return res.json(results);
+    });
+  });
+});
+
+/* GET  city users. */
+router.get('/cities/:id/users', function(req, res, next) {
+  const results = [];
+  const id = req.params.id;
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, function(err, client, done) {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }
+    // SQL Query >
+    //const query =client.query('SELECT ST_AsGeoJSON(points_geom,points_size) FROM contributions LIMIT 1');
+    const query =client.query('SELECT DISTINCT user_id FROM contributions WHERE geonameid = '+id);
+
+    // Stream results back one row at a time
+    query.on('row', function(row) {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', function() {
+      done();
+      return res.json(results);
+    });
+  });
+});
+
 /* GET countries listing. */
 router.get('/countries', function(req, res, next) {
   const results = [];
@@ -110,8 +196,8 @@ router.get('/global/statistics', function(req, res, next) {
       return res.status(500).json({success: false, data: err});
     }
     // SQL Query > select total_duration and total_distance.
-    const q = 'SELECT count(DISTINCT user_id) as total_users, sum(distance) as total_distance, sum(duration) as total_duration'+
-        ' FROM contributions ';
+    const q = 'SELECT count(*) as total_contributions, count(DISTINCT user_id) as total_users, sum(distance) as total_distance, sum(duration) as total_duration'+
+        ' FROM contributions LIMIT 1  ';
     const query =client.query(q);
 
     // Stream results back one row at a time
@@ -121,7 +207,7 @@ router.get('/global/statistics', function(req, res, next) {
     // After all data is returned, close connection and return results
     query.on('end', function() {
       done();
-      return res.json(results);
+      return res.json(results[0]);
     });
   });
 });
@@ -225,7 +311,7 @@ router.get('/countries/:id/statistics', function(req, res, next) {
       return res.status(500).json({success: false, data: err});
     }
     // SQL Query > select total_duration and total_distance.
-    const query =client.query('SELECT count(DISTINCT user_id) as total_users, sum(distance) as total_distance, sum(duration) as total_duration FROM contributions, geonames, countryinfo WHERE contributions.geonameid = geonames.geonameid AND geonames.country = countryinfo.iso_alpha2 AND countryinfo.geonameid = '+id+' LIMIT 1');
+    const query =client.query('SELECT count(*) as total_contributions, count(DISTINCT user_id) as total_users, sum(distance) as total_distance, sum(duration) as total_duration FROM contributions, geonames, countryinfo WHERE contributions.geonameid = geonames.geonameid AND geonames.country = countryinfo.iso_alpha2 AND countryinfo.geonameid = '+id+' LIMIT 1');
 
     // Stream results back one row at a time
     query.on('row', function(row) {
@@ -255,7 +341,7 @@ router.get('/cities/:id/statistics', function(req, res, next) {
       return res.status(500).json({success: false, data: err});
     }
     // SQL Query > select total_duration and total_distance.
-    const query =client.query('SELECT count(DISTINCT user_id) as total_users, sum(distance) as total_distance, sum(duration) as total_duration,count(*) as total_contributions FROM contributions WHERE geonameid = '+id);
+    const query =client.query('SELECT count(*) as total_contributions, count(DISTINCT user_id) as total_users, sum(distance) as total_distance, sum(duration) as total_duration,count(*) as total_contributions FROM contributions WHERE geonameid = '+id);
 
     // Stream results back one row at a time
     query.on('row', function(row) {
