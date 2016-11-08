@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4fc9fe57-4f61-41fb-8c22-38af4327a495" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/api.js" afterPath="$PROJECT_DIR$/routes/api.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="twb_proj.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -34,8 +34,8 @@
       <file leaf-file-name="api.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/routes/api.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="559">
-              <caret line="439" column="13" selection-start-line="439" selection-start-column="13" selection-end-line="439" selection-end-column="13" />
+            <state relative-caret-position="177">
+              <caret line="443" column="7" selection-start-line="443" selection-start-column="7" selection-end-line="443" selection-end-column="7" />
               <folding>
                 <element signature="e#480#1256#0" expanded="false" />
                 <element signature="e#1343#2199#0" expanded="false" />
@@ -95,7 +95,7 @@
   <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" />
   <component name="ProjectFrameBounds">
     <option name="width" value="1598" />
-    <option name="height" value="867" />
+    <option name="height" value="860" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -122,7 +122,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -157,7 +157,7 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -251,12 +251,15 @@
       <workItem from="1478100280374" duration="9315000" />
       <workItem from="1478126982955" duration="25182000" />
       <workItem from="1478516017540" duration="597000" />
-      <workItem from="1478522881255" duration="5738000" />
+      <workItem from="1478522881255" duration="6465000" />
+      <workItem from="1478601549688" duration="344000" />
+      <workItem from="1478601910520" duration="690000" />
+      <workItem from="1478623776174" duration="30000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="60151000" />
+    <option name="totallyTimeSpent" value="61942000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -268,16 +271,16 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1598" height="867" extended-state="0" />
-    <editor active="true" />
+    <frame x="0" y="0" width="1598" height="860" extended-state="0" />
+    <editor active="false" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18790637" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1957087" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32970026" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298969" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32970026" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.53950953" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5392022" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32833788" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -302,6 +305,108 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/routes/api.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#480#1256#0" expanded="false" />
+            <element signature="e#1343#2199#0" expanded="false" />
+            <element signature="e#2304#3307#0" expanded="false" />
+            <element signature="e#3391#4216#0" expanded="false" />
+            <element signature="e#4299#5138#0" expanded="false" />
+            <element signature="e#5222#6082#0" expanded="false" />
+            <element signature="e#6174#7047#0" expanded="false" />
+            <element signature="e#7150#8206#0" expanded="false" />
+            <element signature="e#8304#9132#0" expanded="false" />
+            <element signature="e#9210#10077#0" expanded="false" />
+            <element signature="e#10177#11202#0" expanded="false" />
+            <element signature="e#11297#12229#0" expanded="false" />
+            <element signature="e#12233#12266#0" expanded="false" />
+            <element signature="e#13468#14353#0" expanded="false" />
+            <element signature="e#15443#16361#0" expanded="false" />
+            <element signature="e#16482#17468#0" expanded="false" />
+            <element signature="e#17590#19575#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/api.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#480#1256#0" expanded="false" />
+            <element signature="e#1343#2199#0" expanded="false" />
+            <element signature="e#2304#3307#0" expanded="false" />
+            <element signature="e#3391#4216#0" expanded="false" />
+            <element signature="e#4299#5138#0" expanded="false" />
+            <element signature="e#5222#6082#0" expanded="false" />
+            <element signature="e#6174#7047#0" expanded="false" />
+            <element signature="e#7150#8206#0" expanded="false" />
+            <element signature="e#8304#9132#0" expanded="false" />
+            <element signature="e#9210#10077#0" expanded="false" />
+            <element signature="e#10177#11202#0" expanded="false" />
+            <element signature="e#11297#12229#0" expanded="false" />
+            <element signature="e#12233#12266#0" expanded="false" />
+            <element signature="e#13468#14353#0" expanded="false" />
+            <element signature="e#15443#16361#0" expanded="false" />
+            <element signature="e#16482#17468#0" expanded="false" />
+            <element signature="e#17590#19575#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/api.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#480#1256#0" expanded="false" />
+            <element signature="e#1343#2199#0" expanded="false" />
+            <element signature="e#2304#3307#0" expanded="false" />
+            <element signature="e#3391#4216#0" expanded="false" />
+            <element signature="e#4299#5138#0" expanded="false" />
+            <element signature="e#5222#6082#0" expanded="false" />
+            <element signature="e#6174#7047#0" expanded="false" />
+            <element signature="e#7150#8206#0" expanded="false" />
+            <element signature="e#8304#9132#0" expanded="false" />
+            <element signature="e#9210#10077#0" expanded="false" />
+            <element signature="e#10177#11202#0" expanded="false" />
+            <element signature="e#11297#12229#0" expanded="false" />
+            <element signature="e#12233#12266#0" expanded="false" />
+            <element signature="e#13468#14353#0" expanded="false" />
+            <element signature="e#15443#16361#0" expanded="false" />
+            <element signature="e#16482#17468#0" expanded="false" />
+            <element signature="e#17590#19575#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/routes/api.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -600,8 +705,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/api.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="559">
-          <caret line="439" column="13" selection-start-line="439" selection-start-column="13" selection-end-line="439" selection-end-column="13" />
+        <state relative-caret-position="177">
+          <caret line="443" column="7" selection-start-line="443" selection-start-column="7" selection-end-line="443" selection-end-column="7" />
           <folding>
             <element signature="e#480#1256#0" expanded="false" />
             <element signature="e#1343#2199#0" expanded="false" />
