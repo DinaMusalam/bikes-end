@@ -100,6 +100,66 @@ router.get('/users/:id/contributions', function(req, res, next) {
   });
 });
 
+
+/* GET user statistics. */
+router.get('/users/:id/statistics', function(req, res, next) {
+  const results = [];
+  const id= req.params.id;
+
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, function(err, client, done) {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }
+    // SQL Query > select users
+    //const query =client.query('SELECT ST_AsGeoJSON(points_geom,points_size) FROM contributions LIMIT 1');
+    const query =client.query("SELECT sum(duration) as total_duration, sum(distance) as total_distance, avg(distance) as avg_distance, avg(duration) as avg_duration, count(*) as total_trips FROM contributions WHERE user_id = '"+id+"'");
+
+    // Stream results back one row at a time
+    query.on('row', function(row) {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', function() {
+      done();
+      return res.json(results[0]);
+    });
+  });
+});
+
+/* GET user rank. */
+router.get('/users/:id/rank', function(req, res, next) {
+  const results = [];
+  const id= req.params.id;
+
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, function(err, client, done) {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }
+    // SQL Query > select users
+    //const query =client.query('SELECT ST_AsGeoJSON(points_geom,points_size) FROM contributions LIMIT 1');
+    const query =client.query("SELECT sum(distance) as total_distance,  user_id  FROM contributions  "+" GROUP BY user_id ORDER BY total_distance DESC");
+
+    // Stream results back one row at a time
+    query.on('row', function(row) {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', function() {
+      done();
+      const index = results.findIndex(function(item){return item.user_id==id});
+      return res.json({rank:index+1,total:results.length});
+    });
+  });
+});
+
 /* GET  city users. */
 router.get('/cities/:id/users', function(req, res, next) {
   const results = [];
@@ -532,8 +592,8 @@ router.get('/cities/:id/filter2/:sd/:ed/:res', function(req, res, next) {
 
     var diff = moment(end_date).diff(start_date,resolution);
     //return res.json(diff);
-    var i = 0;
-    for( i =0; i<diff;i++){
+    var rotations = 0;
+    for( var i =0; i<diff;i++){
       // SQL Query >
       var shiftedDate_s = moment(start_date).add(i,resolution).toISOString();
       var shiftedDate_e = moment(start_date).add(i+1,resolution).toISOString();
@@ -544,17 +604,19 @@ router.get('/cities/:id/filter2/:sd/:ed/:res', function(req, res, next) {
       console.log('guery',query);
       // Stream results back one row at a time
       query.on('row', function(row) {
-        if(!row.date){
-          row.date =row.duration=row.distance = 0;
+        rotations++;
+        if(row.date){
+          //row.date =row.duration=row.distance = 0;
+          results.push(row);
+
         }
-        results.push(row);
         //console.log('results',results);
 
       });
 
       // After all data is returned, close connection and return results
       query.on('end', function() {
-        if(results.length==diff){
+        if(rotations==diff){
           done();
           return res.json(results);
         }
