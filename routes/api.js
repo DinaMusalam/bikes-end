@@ -1,7 +1,8 @@
 const express = require('express');
 const app= express();
 const cors = require('cors');
-
+const jwt = require('express-jwt');
+const authConfig = require('../my-config/auth0.json');
 const moment = require('moment');
 
 const pg = require('pg');
@@ -9,14 +10,16 @@ const path = require('path');
 
 const router = express.Router();
 router.all('*', cors());
-
-
+var jwtCheck  = jwt({
+  secret: new Buffer(authConfig.secret,'base64'),
+  audience:authConfig.audience
+});
 
 const connectionString = 'postgres://pzzkwpsqggsmig:CGOQ6vuw7ecylxEiuWJ2eIElMN@ec2-54-243-203-85.compute-1.amazonaws.com:5432/d67oe9r9t3ce0';
 pg.defaults.ssl = true;
 
 /* GET users listing. */
-router.get('/users', function(req, res, next) {
+router.get('/users',jwtCheck, function(req, res, next) {
   const results = [];
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, function(err, client, done) {
@@ -36,14 +39,14 @@ router.get('/users', function(req, res, next) {
   });
     // After all data is returned, close connection and return results
     query.on('end', function() {
-    done();
-  return res.json(results);
+      done();
+      return res.json(results);
   });
   });
 });
 
 /* GET user info by id . */
-router.get('/users/:id/info', function(req, res, next) {
+router.get('/users/:id/info',jwtCheck, function(req, res, next) {
   const results = [];
   const id= req.params.id;
 
@@ -72,7 +75,7 @@ router.get('/users/:id/info', function(req, res, next) {
 });
 
 /* GET user contributions by id . */
-router.get('/users/:id/contributions', function(req, res, next) {
+router.get('/users/:id/contributions',jwtCheck, function(req, res, next) {
   const results = [];
   const id= req.params.id;
 
@@ -102,7 +105,7 @@ router.get('/users/:id/contributions', function(req, res, next) {
 
 
 /* GET user statistics. */
-router.get('/users/:id/statistics', function(req, res, next) {
+router.get('/users/:id/statistics',jwtCheck, function(req, res, next) {
   const results = [];
   const id= req.params.id;
 
@@ -131,7 +134,7 @@ router.get('/users/:id/statistics', function(req, res, next) {
 });
 
 /* GET user rank. */
-router.get('/users/:id/rank', function(req, res, next) {
+router.get('/users/:id/rank',jwtCheck, function(req, res, next) {
   const results = [];
   const id= req.params.id;
 
@@ -161,7 +164,7 @@ router.get('/users/:id/rank', function(req, res, next) {
 });
 
 /* GET  city users. */
-router.get('/cities/:id/users', function(req, res, next) {
+router.get('/cities/:id/users',jwtCheck, function(req, res, next) {
   const results = [];
   const id = req.params.id;
   // Get a Postgres client from the connection pool
@@ -357,7 +360,7 @@ router.get('/cities/:id', function(req, res, next) {
 });
 
 /* GET country statistics . */
-router.get('/countries/:id/statistics', function(req, res, next) {
+router.get('/countries/:id/statistics',jwtCheck, function(req, res, next) {
   const results = [];
   const id = req.param('id');
 
@@ -387,7 +390,7 @@ router.get('/countries/:id/statistics', function(req, res, next) {
 
 
 /* GET city statistics . */
-router.get('/cities/:id/statistics', function(req, res, next) {
+router.get('/cities/:id/statistics',jwtCheck, function(req, res, next) {
   const results = [];
   const id = req.param('id');
 
@@ -445,7 +448,7 @@ router.get('/cities/:id/statistics', function(req, res, next) {
 // });
 
 /* GET city contributions  . */
-router.get('/cities/:id/contributions', function(req, res, next) {
+router.get('/cities/:id/contributions',jwtCheck, function(req, res, next) {
   const results = [];
   const id = req.param('id');
 
@@ -475,7 +478,7 @@ router.get('/cities/:id/contributions', function(req, res, next) {
 });
 
 /* GET contribution by id  . */
-router.get('/contributions/:id', function(req, res, next) {
+router.get('/contributions/:id',jwtCheck, function(req, res, next) {
   const results = [];
   const id = req.params.id;
 
@@ -506,7 +509,7 @@ router.get('/contributions/:id', function(req, res, next) {
 });
 
 /* GET contribution Geojson . */
-router.get('/contributions/:id/geojson', function(req, res, next) {
+router.get('/contributions/:id/geojson',jwtCheck, function(req, res, next) {
   const results = [];
   const id = req.params.id;
 
@@ -538,7 +541,7 @@ router.get('/contributions/:id/geojson', function(req, res, next) {
 
 
 /* GET city contributions in time frame . */
-router.get('/cities/:id/filter/:sd/:ed/:res', function(req, res, next) {
+router.get('/cities/:id/filter/:sd/:ed/:res',jwtCheck, function(req, res, next) {
   const results = [];
   const id = req.param('id');
   const start_date = req.param('sd');
@@ -573,7 +576,7 @@ router.get('/cities/:id/filter/:sd/:ed/:res', function(req, res, next) {
 
 
 /* GET city contributions in time frame . */
-router.get('/cities/:id/filter2/:sd/:ed/:res', function(req, res, next) {
+router.get('/cities/:id/filter2/:sd/:ed/:res',jwtCheck, function(req, res, next) {
   const results = [];
   const id = req.param('id');
   const start_date = req.param('sd');
