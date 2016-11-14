@@ -57,7 +57,7 @@ router.get('/users/:id/info', function(req, res, next) {
     }
     // SQL Query > select users
     //const query =client.query('SELECT ST_AsGeoJSON(points_geom,points_size) FROM contributions LIMIT 1');
-    const query =client.query("SELECT users.device_id, users.user_id FROM users WHERE users.user_id = '"+id+"'");
+    const query =client.query("SELECT users.device_id, users.user_id FROM users WHERE users.user_id::varchar = '"+id+"'");
 
     // Stream results back one row at a time
     query.on('row', function(row) {
@@ -86,7 +86,7 @@ router.get('/users/:id/contributions', function(req, res, next) {
     }
     // SQL Query > select users
     //const query =client.query('SELECT ST_AsGeoJSON(points_geom,points_size) FROM contributions LIMIT 1');
-    const query =client.query("SELECT users.device_id, users.user_id, contributions.contribution_id,contributions.started_at FROM contributions, users WHERE users.user_id=contributions.user_id AND users.user_id = '"+id+"' ORDER BY contributions.started_at DESC");
+    const query =client.query("SELECT users.device_id, users.user_id, contributions.contribution_id,contributions.started_at FROM contributions, users WHERE users.user_id=contributions.user_id AND users.user_id::varchar = '"+id+"' ORDER BY contributions.started_at DESC");
 
     // Stream results back one row at a time
     query.on('row', function(row) {
