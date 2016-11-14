@@ -116,7 +116,7 @@ router.get('/users/:id/statistics', function(req, res, next) {
     }
     // SQL Query > select users
     //const query =client.query('SELECT ST_AsGeoJSON(points_geom,points_size) FROM contributions LIMIT 1');
-    const query =client.query("SELECT sum(duration) as total_duration, sum(distance) as total_distance, avg(distance) as avg_distance, avg(duration) as avg_duration, count(*) as total_trips FROM contributions WHERE user_id = '"+id+"'");
+    const query =client.query("SELECT sum(duration) as total_duration, sum(distance) as total_distance, avg(distance) as avg_distance, avg(duration) as avg_duration, count(*) as total_trips FROM contributions WHERE user_id::varchar =  '"+id+"'");
 
     // Stream results back one row at a time
     query.on('row', function(row) {
@@ -505,8 +505,8 @@ router.get('/contributions/:id', function(req, res, next) {
   });
 });
 
-/* GET contribution Geojson . */
-router.get('/contributions/:id/geojson', function(req, res, next) {
+/* GET contribution kml. */
+router.get('/contributions/:id/kml', function(req, res, next) {
   const results = [];
   const id = req.params.id;
 
@@ -520,7 +520,7 @@ router.get('/contributions/:id/geojson', function(req, res, next) {
     }
     // SQL Query > select users
     //const query =client.query('SELECT ST_AsGeoJSON(points_geom,points_size) FROM contributions LIMIT 1');
-    const query =client.query("SELECT  ST_AsGeoJSON(points_geom) FROM contributions WHERE contribution_id = '"+id+"'");
+    const query =client.query("SELECT  ST_AsKML(ST_GeomFromWKB(points_geom,4326)) FROM contributions WHERE contribution_id = '"+id+"'");
 
     // Stream results back one row at a time
     query.on('row', function(row) {
