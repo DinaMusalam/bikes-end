@@ -489,7 +489,7 @@ router.get('/contributions/:id', function(req, res, next) {
     }
     // SQL Query > select users
     //const query =client.query('SELECT ST_AsGeoJSON(points_geom,points_size) FROM contributions LIMIT 1');
-    const query =client.query("SELECT * FROM contributions WHERE contribution_id = '"+id+"'");
+    const query =client.query("SELECT ST_AsGeoJSON(points_geom,15,4),started_at,distance,duration FROM contributions WHERE contribution_id = '"+id+"'");
 
     // Stream results back one row at a time
     query.on('row', function(row) {
@@ -521,6 +521,38 @@ router.get('/contributions/:id/kml', function(req, res, next) {
     // SQL Query > select users
     //const query =client.query('SELECT ST_AsGeoJSON(points_geom,points_size) FROM contributions LIMIT 1');
     const query =client.query("SELECT  ST_AsKML(ST_GeomFromWKB(points_geom,4326)) FROM contributions WHERE contribution_id = '"+id+"'");
+
+    // Stream results back one row at a time
+    query.on('row', function(row) {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', function() {
+      done();
+      if(!results.length)
+        return res.json({});
+      return res.json(results[0]);
+    });
+  });
+});
+
+
+/* GET contribution kml. */
+router.get('/contributions/:id/geojson', function(req, res, next) {
+  const results = [];
+  const id = req.params.id;
+
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, function(err, client, done) {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }
+    // SQL Query > select users
+    //const query =client.query('SELECT ST_AsGeoJSON(points_geom,points_size) FROM contributions LIMIT 1');
+    const query =client.query("SELECT ST_ASGeoJSON(ST_GeomFromWKB(points_geom,4326)), points_size FROM contributions WHERE contribution_id = '"+id+"'");
 
     // Stream results back one row at a time
     query.on('row', function(row) {
