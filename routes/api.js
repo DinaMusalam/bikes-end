@@ -474,6 +474,41 @@ router.get('/cities/:id/contributions', function(req, res, next) {
   });
 });
 
+/* GET city contributions' geojson for a month  . */
+router.get('/cities/:id/contributions/geojson/:sd', function(req, res, next) {
+  const results = [];
+  const cityId = req.params.id;
+  const startDate = req.params.sd;
+  const endDate = moment(startDate).add(1,'months').toISOString();
+
+
+
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, function(err, client, done) {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }
+    // SQL Query >
+    // const query =client.query("SELECT ST_AsGeoJSON( ST_Multi(ST_Union(ST_Force_2D(points_geom)))) FROM contributions WHERE geonameid= "+cityId
+    //     +" AND started_at >= timestamp '"+startDate+"' AND started_at<= timestamp '"+endDate+"'");
+    const query =client.query("SELECT ST_AsGeoJSON(ST_Force_2D(points_geom)) FROM contributions WHERE geonameid= "+cityId
+        +" AND started_at >= timestamp '"+startDate+"' AND started_at<= timestamp '"+endDate+"'");
+
+    // Stream results back one row at a time
+    query.on('row', function(row) {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', function() {
+      done();
+      return res.json(results);
+    });
+  });
+});
+
 /* GET contribution by id  . */
 router.get('/contributions/:id', function(req, res, next) {
   const results = [];
@@ -489,7 +524,7 @@ router.get('/contributions/:id', function(req, res, next) {
     }
     // SQL Query > select users
     //const query =client.query('SELECT ST_AsGeoJSON(points_geom,points_size) FROM contributions LIMIT 1');
-    const query =client.query("SELECT ST_AsGeoJSON(points_geom,15,4),started_at,distance,duration FROM contributions WHERE contribution_id = '"+id+"'");
+    const query =client.query("SELECT ST_AsGeoJSON(ST_Force_2D(points_geom)),started_at,distance,duration FROM contributions WHERE contribution_id = '"+id+"'");
 
     // Stream results back one row at a time
     query.on('row', function(row) {
@@ -537,7 +572,7 @@ router.get('/contributions/:id/kml', function(req, res, next) {
 });
 
 
-/* GET contribution kml. */
+/* GET contribution geojson. */
 router.get('/contributions/:id/geojson', function(req, res, next) {
   const results = [];
   const id = req.params.id;
